@@ -15,31 +15,56 @@ printed in order.
   
 */
 
-public class SynchedSplitLoops {
-	static int counter = 0;
-	
-	public static void main(String[] args) {
-		Thread t1 = new Thread(() -> {
-			for(int i = 0; i < 100000; i++) {
-				counter++;
-			}
-		});
-		
-		Thread t2 = new Thread(() -> {
-			for(int i = 0; i < 100000; i++) {
-				System.out.println(counter);
-			}
-		});
-		
-		t1.start();
-		t2.start();
-		
-		try {
-			t1.join();
-			t2.join();
-		} catch (InterruptedException e) {
-			System.err.println("Could not join threads");
-		}
-		
-	}
+import _05_Synchronized_Swimming.SynchronizedSwimming;
+import _06_Wait_and_Notify.Example.SynchedThreadPrinter;
+import _06_Wait_and_Notify.Example.ThreadPrinter;
+
+public class SynchedSplitLoops
+{
+    static int counter = 0;
+    static Object getSynchedThreads = new Object();
+
+    SynchedThreadPrinter synchedThreadPrinter = new SynchedThreadPrinter();
+    ThreadPrinter threadPrinter = new ThreadPrinter();
+
+    public static void main(String[] args)
+    {
+
+        Thread t1 = new Thread(() ->
+        {
+            synchronized (getSynchedThreads)
+            {
+                for (int i = 0; i < 100000; i++)
+                {
+                    counter++;
+                }
+
+            }
+        });
+
+        Thread t2 = new Thread(() ->
+        {
+            synchronized (getSynchedThreads)
+            {
+                for (int i = 0; i < 100000; i++)
+                {
+                    System.out.println(counter);
+                }
+            }
+        });
+
+
+        t1.start();
+        t2.start();
+
+        try
+        {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e)
+        {
+            System.err.println("Could not join threads");
+        }
+
+    }
 }

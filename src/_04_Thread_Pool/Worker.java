@@ -1,13 +1,18 @@
 package _04_Thread_Pool;
 
 
-public class Worker implements Runnable {
+import java.util.concurrent.ConcurrentLinkedDeque;
 
+public class Worker implements Runnable {
+	ConcurrentLinkedDeque<Task> taskQueue;
+	public Worker(ConcurrentLinkedDeque<Task> T){
+		this.taskQueue = T;
+	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		while (taskQueue.isEmpty() == false){
+			Task task = taskQueue.remove();
+			task.perform();
+		}
 	}
-
-
 }
