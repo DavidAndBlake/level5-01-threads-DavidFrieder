@@ -27,33 +27,49 @@ public class SynchedSplitLoops
     SynchedThreadPrinter synchedThreadPrinter = new SynchedThreadPrinter();
     ThreadPrinter threadPrinter = new ThreadPrinter();
 
-    public static void main(String[] args)
+    public static <interruptedExeption> void main(String[] args)
     {
 
         Thread t1 = new Thread(() ->
         {
-            synchronized (getSynchedThreads)
+            for (int i = 0; i < 100000; i++)
             {
-                for (int i = 0; i < 100000; i++)
+                synchronized (getSynchedThreads)
                 {
-                    counter++;
-                }
 
+                    counter++;
+
+                getSynchedThreads.notify();
+                try
+                {
+                    getSynchedThreads.wait();
+                } catch (InterruptedException e)
+                {
+                    System.out.println("notification error");
+                }
             }
-        });
+        }});
 
         Thread t2 = new Thread(() ->
         {
-            synchronized (getSynchedThreads)
+            for (int i = 0; i < 100000; i++)
             {
-                for (int i = 0; i < 100000; i++)
+                synchronized (getSynchedThreads)
                 {
+
                     System.out.println(counter);
+                    getSynchedThreads.notify();
+                    try
+                    {
+                        getSynchedThreads.wait();
+                    } catch (InterruptedException e)
+                    {
+                        System.out.println("error");
+                    }
+
                 }
             }
         });
-
-
         t1.start();
         t2.start();
 
